@@ -10,6 +10,23 @@ router.post(
   body("email").isEmail().normalizeEmail(),
   async (request: CustomRequest, response: Response, next: NextFunction) => {
     const email = request.body.email;
+    // #region Start Stripe Implementation
+    try {
+      const user: User | null = await UserService.findUserByEmail(email);
+
+      if (!user) {
+        return response
+          .status(404)
+          .json({ error: { message: "User not found" } });
+      }
+
+      request.userId = user.id;
+      next();
+    } catch (error: any) {
+      console.error("Error signing in user:", error);
+      return response.status(500).json({ error });
+    }
+    // #endregion End Stripe Implementation
   },
   SessionsService.create,
   async (request: Request, response: Response) => {
