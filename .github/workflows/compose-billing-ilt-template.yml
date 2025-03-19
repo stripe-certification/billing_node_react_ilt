@@ -1,0 +1,138 @@
+#---------------------------------------------------------------------------------------------------------------------------------------------------
+#                                       Reusable Workflow responsible for composing a billing_ilt template
+#---------------------------------------------------------------------------------------------------------------------------------------------------
+#
+# Currently responsible for composing the code/client and code/server folders
+# -> After code changes the updated contents would be copied, comitted and pushed
+# Future updates to this workflow would have to handle changes to the other parts of the template-challenge repo 
+# like test, docs etc., presumably in a similar manner
+#
+#---------------------------------------------------------------------------------------------------------------------------------------------------
+
+name: Compose the Billing ILT Template
+
+on: 
+  workflow_call:
+    inputs:      
+      challenge_client: 
+        type: string
+        required: true
+        description: Client language/framework
+      challenge_server: 
+        type: string
+        required: true
+        description: Server language/framework
+    secrets:
+      token:
+        required: true
+      bot_name:
+        required: true
+      bot_email:
+        required: true
+
+jobs:
+  compose:
+    name: Compose
+    runs-on: ubuntu-latest
+    env: 
+      org: stripe-certification
+    steps:
+      - name: Get Token
+        run: |
+          TOKEN="$(npx obtain-github-app-installation-access-token ci ${{ secrets.token }})"
+          echo "::add-mask::$TOKEN"
+          echo "github-token=$TOKEN" >> $GITHUB_ENV
+
+      - name: Get Name
+        run: |
+          REPO_NAME=${{ github.event.repository.name }}
+          CHALLENGE=${REPO_NAME%*}
+          echo "challenge-name=$CHALLENGE" >> $GITHUB_ENV
+
+      - name: Checkout Source
+        uses: actions/checkout@v2
+        with:
+          ref: main
+          token: ${{ env.github-token }}
+          path: source
+
+      - name: Check if Target exists
+        id: target_exists
+        continue-on-error: true
+        run: |
+          echo ${{ env.github-token }} > .githubtoken
+          gh auth login --with-token < .githubtoken
+          rm .githubtoken
+          gh repo view ${{ env.org }}/${{ env.challenge-name }}_${{ inputs.challenge_server }}_${{ inputs.challenge_client }} >/dev/null
+
+      - name: Create Target
+        if: ${{ steps.target_exists.outcome == 'failure' }}
+        run: |                
+          gh repo create ${{ env.org }}/${{ env.challenge-name }}_${{ inputs.challenge_server }}_${{ inputs.challenge_client }} --private --gitignore VisualStudio
+          gh repo edit ${{ env.org }}/${{ env.challenge-name }}_${{ inputs.challenge_server }}_${{ inputs.challenge_client }} --template
+
+      - name: Checkout Main
+        if: ${{ steps.target_exists.outcome == 'failure' }}
+        uses: actions/checkout@v2
+        with: 
+          repository: ${{ env.org }}/${{ env.challenge-name }}_${{ inputs.challenge_server }}_${{ inputs.challenge_client }}
+          ref: main
+          token: ${{ env.github-token }}
+          path: target
+      
+      - name: Checkout Solution
+        if: ${{ steps.target_exists.outcome != 'failure' }}
+        uses: actions/checkout@v2
+        with: 
+          repository: ${{ env.org }}/${{ env.challenge-name }}_${{ inputs.challenge_server }}_${{ inputs.challenge_client }}
+          ref: solution
+          token: ${{ env.github-token }}
+          path: target
+      
+      - name: Copy Contents
+        run: |
+          rm -rfv ${{ github.workspace }}/target/{*,.gitignore}
+          mkdir -p ${{ github.workspace }}/target/.github/workflows && mkdir ${{ github.workspace }}/target/code
+          cp ${{ github.workspace }}/source/.github/workflows/redact-and-push.yml ${{ github.workspace }}/target/.github/workflows
+          cp -R ${{ github.workspace }}/source/clients/${{ inputs.challenge_client }}/client ${{ github.workspace }}/target/code
+          cp -R ${{ github.workspace }}/source/servers/${{ inputs.challenge_server }}/* ${{ github.workspace }}/target/code
+          sed -i -e 's/repo_name/${{ env.challenge-name }}_${{ inputs.challenge_server }}_${{ inputs.challenge_client }}/g' ${{ github.workspace }}/source/copy.bara.sky
+          cp -R ${{ github.workspace }}/source/{copy.bara.sky,README.md} ${{ github.workspace }}/target
+        working-directory: ${{ github.workspace }}/target
+
+      - name: Update PORT variable if React
+        run: |
+          if ${{ inputs.challenge_client == 'react' }}
+          then
+              sed -i '/^PORT=/s/=.*/=3000\n/' .env.example
+          fi
+        working-directory: ${{ github.workspace }}/target/code/server
+
+      - name: Spread out the thundering herd over 60s
+        run: |
+          sleep $((RANDOM % 60))
+      
+      - name: Push to All
+        if: ${{ steps.target_exists.outcome == 'failure' }}
+        run: |
+          git config user.name "${{ secrets.bot_name }}"
+          git config user.email "${{ secrets.bot_email }}"
+          git add .
+          git commit -m "${{ github.event.head_commit.message }}"
+          git push --set-upstream origin main
+          git checkout -b redacted-code
+          git push --set-upstream origin redacted-code
+        working-directory: ${{ github.workspace }}/target
+
+      - name: Push to Solution
+        if: ${{ steps.target_exists.outcome != 'failure' }}
+        uses: EndBug/add-and-commit@v7
+        with:
+          add: '.'
+          author_name: ${{ secrets.bot_name }}
+          author_email: ${{ secrets.bot_email }}
+          message: ${{ github.event.head_commit.message }} # hard coded as of now and can be assigned to an env var depending on whether the repo exists or not
+          cwd: 'target'
+          branch: solution
+          github_token: ${{ env.github-token }}
+          push: true
