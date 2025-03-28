@@ -72,7 +72,6 @@ async function startServer() {
     });
 
     app.listen(4242, "localhost", () => {
-      console.log("FIXME: testing updated in unredacted code, remove if it works");
       console.log("Server is listening on port 4242...");
     });
   } catch (error) {
