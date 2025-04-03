@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import fetchClient from "@/utils/fetchClient";
 
-export default function ReturnPage() {
+function ReturnPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,5 +79,13 @@ export default function ReturnPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ReturnWithSuspense() {
+  return (
+    <Suspense>
+      <ReturnPage />
+    </Suspense>
   );
 }

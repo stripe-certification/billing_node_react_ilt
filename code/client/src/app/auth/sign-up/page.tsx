@@ -2,6 +2,7 @@
 
 import SignUpForm from "@/components/auth/SignUpForm";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from 'react'
 import { useUserContext } from "@/contexts/UserContext";
 import Subscribe from "@/components/subscribe/Subscribe";
 import PricingTable from "@/components/landing/PricingTable";
@@ -9,13 +10,15 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { LoadingOverlay } from "@/components";
 
-export default function SignUp() {
+
+function SignUp() {
   const { isLoggedIn, hasActiveSubscription } = useUserContext();
-  const searchParams = useSearchParams();
-  const plan = searchParams.get("plan")?.toLowerCase() as "monthly" | "yearly";
   const router = useRouter();
 
   const canAccessAccount = isLoggedIn() && hasActiveSubscription();
+
+  const searchParams = useSearchParams();
+  const plan = searchParams.get("plan")?.toLowerCase() as "monthly" | "yearly";
 
   useEffect(() => {
     if (canAccessAccount) {
@@ -35,4 +38,17 @@ export default function SignUp() {
   }
 
   return <div className={containerClass}>{content}</div>;
+}
+
+/* 
+ * Separating this function out is a workaround for Next's requirement that pages that call 
+ * useSearchParams should have the call wrapped in a Suspense boundary:
+ * https://nextjs.org/docs/app/api-reference/functions/use-search-params.  
+ */
+export default function SignUpWithSuspense() {
+  return (
+    <Suspense>
+      <SignUp />
+    </Suspense>
+  )
 }

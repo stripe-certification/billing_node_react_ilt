@@ -19,13 +19,13 @@ router.post(
     const { prompt, meterEventName } = request.body;
 
     try {
-      const checkoutSession = await ChatService.generateLlmResponse(
+      const chatResponse = await ChatService.generateLlmResponse(
         prompt,
         user,
         meterEventName
       );
 
-      response.json(checkoutSession);
+      response.json(chatResponse);
     } catch (error: any) {
       console.error("Error submitting request:", error);
       response.status(500).json({ error });

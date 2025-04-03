@@ -30,11 +30,6 @@ const Subscribe = () => {
     }
 
     const getSecret = async () => {
-      const response = await fetchClient.post("/checkout-session", {
-        userId: user.id,
-        plan,
-      });
-      setCheckoutData({ clientSecret: response.data.clientSecret });
     };
 
     getSecret();
@@ -69,12 +64,6 @@ const Subscribe = () => {
 
         <div className="bg-white p-8 rounded-lg shadow-md">
           <div id="checkout">
-            <EmbeddedCheckoutProvider
-              stripe={stripePromise}
-              options={{ clientSecret: checkoutData.clientSecret }}
-            >
-              <EmbeddedCheckout />
-            </EmbeddedCheckoutProvider>
           </div>
         </div>
       </div>

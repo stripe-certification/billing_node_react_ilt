@@ -20,8 +20,8 @@ const PricingTable = () => {
     );
   }
 
-  const modelsArray = offerings.models ? Object.values(offerings.models) : [];
-  const prepaidArray = offerings.prepaid
+  const modelsArray = (offerings && offerings.models) ? Object.values(offerings.models) : [];
+  const prepaidArray = (offerings && offerings.prepaid) 
     ? Object.values(offerings.prepaid)
     : [];
 

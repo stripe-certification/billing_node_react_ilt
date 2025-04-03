@@ -37,8 +37,9 @@ export const OfferingsProvider: React.FC<React.PropsWithChildren> = ({
     fetchOfferings();
   }, []);
 
+  const value: OfferingsContextValue = (offeringsLoading || offerings === null) ? { offerings: null, offeringsLoading: true } : { offerings: offerings, offeringsLoading: false };
   return (
-    <OfferingsContext.Provider value={{ offerings, offeringsLoading }}>
+    <OfferingsContext.Provider value={value}>
       {children}
     </OfferingsContext.Provider>
   );

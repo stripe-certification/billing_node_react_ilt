@@ -336,18 +336,7 @@ async function startSubscription(data: {
 
   const customerId = userData.customerId;
 
-  const payload: CheckoutSessionPayload = {
-    mode: "subscription",
-    customer: customerId,
-    line_items: lineItems,
-    ui_mode: "embedded",
-    subscription_data: {
-      metadata: {
-        userId: userData.id,
-      },
-    },
-    return_url: `http://${process.env.BASE_URL || "localhost:3000"}/return?session_id={CHECKOUT_SESSION_ID}`,
-  };
+  let payload: CheckoutSessionPayload | null = null;
 
   return await stripe.getSdk().checkout.sessions.create(payload);
 }
@@ -365,39 +354,26 @@ async function getCustomerPortalSession(payload: {
 }): Promise<Stripe.BillingPortal.Session> {
   const BASE_URL = `${process.env.CLIENT_HOSTNAME || "localhost"}`;
   const PORT = `${process.env.CLIENT_PORT || "3000"}`;
+  const returnUrl = `${BASE_URL}:${PORT}/account`;
 
   const user = loadUserOrThrow(payload.userId);
   if (!user.subscriptionId) {
     throw new Error("User does not have a subscription");
   }
 
-  const subscriptionId = user.subscriptionId;
-  const sessionParams: Stripe.BillingPortal.SessionCreateParams = {
-    customer: user.customerId,
-    return_url: `${BASE_URL}:${PORT}/account`,
-  };
-  switch (payload.action) {
-    case PortalAction.ACCOUNT:
-      break;
-    case PortalAction.UPDATE_PAYMENT_METHOD:
-      sessionParams.flow_data = {
-        type: PortalAction.UPDATE_PAYMENT_METHOD,
-      };
-      break;
-    case PortalAction.CANCEL:
-      sessionParams.flow_data = {
-        type: PortalAction.CANCEL,
-        subscription_cancel: {
-          subscription: subscriptionId,
-        },
-      };
-      break;
-    default:
-      throw new Error(`Unsupported action ${payload.action}`);
-  }
-  const session = await stripe
-    .getSdk()
-    .billingPortal.sessions.create(sessionParams);
+  // Training TODO: Build up the parameters that will be passed to the API call 
+  // to create a Customer Session.  You'll need to handle the deep link PortalActions, 
+  // we want to use the deep links to support letting the customer update their payment method
+  // and cancel their subscription.
+  // https://docs.stripe.com/api/customer_portal/sessions/create?lang=node
+  // https://docs.stripe.com/customer-management/portal-deep-links 
+
+  let sessionParams: Stripe.BillingPortal.SessionCreateParams | null = null;
+
+
+  let session: Stripe.BillingPortal.Session | null = null;
+
+
   return session;
 }
 

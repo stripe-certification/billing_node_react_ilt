@@ -10,6 +10,21 @@ router.post(
   body("email").isEmail().normalizeEmail(),
   async (request: CustomRequest, response: Response, next: NextFunction) => {
     const email = request.body.email;
+    try {
+      const user: User | null = await UserService.findUserByEmail(email);
+
+      if (!user) {
+        return response
+          .status(404)
+          .json({ error: { message: "User not found" } });
+      }
+
+      request.userId = user.id;
+      next();
+    } catch (error: any) {
+      console.error("Error signing in user:", error);
+      return response.status(500).json({ error });
+    }
   },
   SessionsService.create,
   async (request: Request, response: Response) => {
@@ -93,7 +108,6 @@ router.get("/users", async (request: Request, response: Response) => {
 
 /*
  * Create a redirect URL to the hosted Customer Portal.
- * The action parameter specifies a deep link.
  */
 router.post(
   "/users/manage",

@@ -19,18 +19,8 @@ class stripe {
 
   static async findPrice(lookupKey: string): Promise<Stripe.Price> {
     const stripe = this.getSdk();
-    const prices = await stripe.prices.list({
-      active: true,
-      lookup_keys: [lookupKey],
-      limit: 1,
-      expand: ["data.product"],
-    });
-
-    if (!prices.data.length) {
-      throw new Error(`Price not found for lookup key: ${lookupKey}`);
-    }
-
-    return prices.data[0];
+    let price = null;
+    return price;
   }
 
   static async createRecurringPrice(
@@ -40,12 +30,6 @@ class stripe {
     currency: string
   ): Promise<Stripe.Price> {
     const stripe = this.getSdk();
-    return await stripe.prices.create({
-      product: productId,
-      recurring: { interval },
-      unit_amount: unitAmount,
-      currency,
-    });
   }
 
   static async recordMeterEvent(
@@ -54,6 +38,7 @@ class stripe {
     tokens: string
   ): Promise<Stripe.Billing.MeterEvent> {
     const stripe = this.getSdk();
+    // #region Start Stripe Implementation
     return await stripe.billing.meterEvents.create({
       event_name: eventName,
       payload: {
@@ -61,6 +46,7 @@ class stripe {
         value: tokens,
       },
     });
+    // #region Start Stripe Implementation
   }
 }
 
