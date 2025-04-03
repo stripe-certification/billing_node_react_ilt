@@ -12,7 +12,6 @@ interface RootLayoutProps {
 export const metadata: Metadata = {
   title: "Lora | Demo",
   description: "Sample application for Billing training",
-  viewport: "width=device-width, initial-scale=1",
 };
 
 export default async function RootLayout(props: RootLayoutProps) {
@@ -40,28 +39,6 @@ export default async function RootLayout(props: RootLayoutProps) {
         />
         <link href="/favicon.png" rel="icon" />
         <meta name="robots" content="noindex, nofollow" />
-
-        {/* GOOGLE ANALYTICS - DO NOT REMOVE */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-4WLNJQ7QF9"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){window.dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'G-4WLNJQ7QF9');
-        `}
-        </Script>
-
-        {/* UMAMI ANALYTICS - DO NOT REMOVE */}
-        <script
-          defer
-          src="https://analytics-hub.stripedemos.com/script.js"
-          data-website-id="cb163646-e18a-4c58-87e0-e66f6050b092"
-        ></script>
       </head>
       <body>
         <ClientLayout>{children}</ClientLayout>

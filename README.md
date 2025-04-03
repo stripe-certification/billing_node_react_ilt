@@ -35,7 +35,7 @@ This application is built for educational purposes as an example of how to use S
 
    ```bash
    cd ./client/nextjs/client
-   npm install --legacy-peer-deps
+   npm install
    ```
 
 4. **Copy environment variables:**

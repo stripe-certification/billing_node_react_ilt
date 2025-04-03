@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { useTranslation } from "next-i18next";
 import Link from "next/link";
 
 interface ErrorBannerProps {
@@ -13,8 +12,7 @@ interface ErrorBannerProps {
 
 const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, link }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const { t } = useTranslation();
-
+  if (!message) message = "An issue occurred. Please retry.";
   if (!isVisible) return null;
 
   return (
@@ -22,7 +20,7 @@ const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, link }) => {
       <div className="flex">
         <div className="ml-3">
           <p className="text-sm text-red-700">
-            {message || t("common.error.default_message")}
+            {message }
           </p>
           {link && (
             <div className="mt-2">
@@ -42,7 +40,7 @@ const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, link }) => {
               className="inline-flex rounded-md bg-red-50 p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-50"
               onClick={() => setIsVisible(false)}
             >
-              <span className="sr-only">{t("common.error.dismiss")}</span>
+              <span className="sr-only">Close</span>
               <XMarkIcon className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
