@@ -17,18 +17,9 @@ async function generateLlmResponse(
   message: string;
   meterEvent: Stripe.Billing.MeterEvent;
 }> {
-  const tokenCount = estimateTokenCount(prompt);
-
-  const isActive = await UserService.isUserActive(user.id);
-  if (!isActive) {
-    throw new Error("User must have an active subscription");
-  }
-
-  const meterEvent = await stripe.recordMeterEvent(
-    eventName,
-    user.customerId,
-    tokenCount
-  );
+  let meterEvent: Stripe.Billing.MeterEvent;
+  // Training TODO: Calculate the response from the LLM and 
+  // create a meter event to record the usage.
   const message = dummyLlm(prompt);
 
   return {

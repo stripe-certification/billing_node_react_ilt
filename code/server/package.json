@@ -8,9 +8,11 @@
         "lint": "npx eslint",
         "prestart": "npm run lint",
         "build": "tsc",
-        "dev": "tsx watch server.ts",
+        "startServerDev": "tsx watch server.ts",
         "start": "npx tsx server.ts",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "startListener": "stripe listen --forward-to http://localhost:4242/webhook",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "concurrently -i --kill-others \"npm run startServerDev\" \"npm run startListener\""
     },
     "author": "stripe-ecosystem",
     "license": "ISC",
@@ -26,14 +28,15 @@
         "express-session": "^1.18.1",
         "express-validator": "^7.2.1",
         "lodash": "^4.17.21",
+        "lorem-ipsum": "^2.0.8",
         "lowdb": "^7.0.1",
         "node-cache": "^5.1.2",
-        "stripe": "^18.0.0",
-        "lorem-ipsum": "^2.0.8"
+        "stripe": "^18.0.0"
     },
     "devDependencies": {
         "@types/express": "^4.17.21",
         "@types/node": "^22.13.0",
+        "concurrently": "^9.1.2",
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-config-recommended": "^4.1.0",

@@ -4,6 +4,7 @@ import {
   PricedPrepaidCredit,
   PricedPrepaidPackages,
 } from "../types/llm";
+import stripe from "../clients/stripe";
 
 export function findPrepaidByLookupKey(
   subscriptionItems: Stripe.SubscriptionItem[],
@@ -22,16 +23,25 @@ export function findPrepaidByLookupKey(
   return null;
 }
 
+async function isCreditItem(line: Stripe.InvoiceLineItem, prepaidOfferings: PricedPrepaidPackages): Stripe.InvoiceLineItem | false {
+  if (line.amount > 0)
+  {
+    const priceId = line.pricing?.price_details?.price;
+    if (!priceId) return false;
+    const lookupKey = (await stripe.getSdk().prices.retrieve(priceId)).lookup_key;
+    if (!lookupKey) return false;
+
+    if (Object.values(prepaidOfferings)
+        .map((offering) => offering.lookupKey)
+        .includes(lookupKey))
+      return line;
+  }
+  return false;
+}
+
 export function findPrepaidCreditItem(
   invoice: Stripe.Invoice,
   prepaidOfferings: PricedPrepaidPackages
 ): Stripe.InvoiceLineItem | undefined {
-  return invoice.lines.data.find(
-    (line) =>
-      line.amount > 0 &&
-      line.price?.lookup_key &&
-      Object.values(prepaidOfferings)
-        .map((offering) => offering.lookupKey)
-        .includes(line.price.lookup_key)
-  );
+  return invoice.lines.data.find((line) => isCreditItem(line, prepaidOfferings));
 }

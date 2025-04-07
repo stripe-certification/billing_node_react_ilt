@@ -17,6 +17,7 @@ router.post(
   async (request: Request, response: Response) => {
     try {
       let event = null;
+      // Training TODO: Handle a webhook events
 
       switch (event.type) {
         case "invoice.created":
@@ -35,9 +36,8 @@ router.post(
 
           break;
         case "invoice.payment_failed":
-          if (!isLoraInvoice(obj)) break;
-          await UserService.recordPaymentFailure(event);
-
+          // Training TODO: When you receive a payment failure event, 
+          // update the user's status in the "DB".
           break;
         case "customer.subscription.deleted":
           if (!isLoraSubscription(obj)) break;

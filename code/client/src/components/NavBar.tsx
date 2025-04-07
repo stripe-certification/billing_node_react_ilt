@@ -4,7 +4,7 @@ import Link from "next/link";
 import Logo from "./ui/Logo";
 import { useRouter } from "next/navigation";
 export default function NavBar() {
-  const { isLoggedIn, hasActiveSubscription, logout } = useUserContext();
+  const { isLoggedIn, hasActiveSubscription, logout, userLoading } = useUserContext();
   const router = useRouter();
   return (
     <Disclosure as="nav" className="bg-background">
@@ -21,7 +21,7 @@ export default function NavBar() {
           </div>
 
           <div className="flex-1 flex items-center justify-end z-20">
-            {isLoggedIn() ? (
+            {(!userLoading && isLoggedIn()) ? (
               <>
                 {hasActiveSubscription() && (
                   <div className="flex flex-row">

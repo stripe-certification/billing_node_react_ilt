@@ -6,17 +6,19 @@ import { useUserContext } from "@/contexts/UserContext";
 
 const SignInForm = () => {
   const router = useRouter();
-  const { user, login, hasActiveSubscription, isLoggedIn } = useUserContext();
+  const { user, login, hasActiveSubscription, isLoggedIn, userLoading } = useUserContext();
   const [email, setEmail] = useState(user?.email || "");
   const [password, setPassword] = useState("sijsdj90fW@(*8");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isLoggedIn() && hasActiveSubscription()) {
-      router.push("/account");
-    } else if (isLoggedIn() && !hasActiveSubscription()) {
-      router.push("/auth/sign-up");
+    if (!userLoading) {
+      if (isLoggedIn() && hasActiveSubscription()) {
+        router.push("/account");
+      } else if (isLoggedIn() && !hasActiveSubscription()) {
+        router.push("/auth/sign-up");
+      }
     }
   }, [isLoggedIn, hasActiveSubscription, router]);
 

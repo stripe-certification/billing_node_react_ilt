@@ -11,7 +11,7 @@ router.post(
   async (request: CustomRequest, response: Response, next: NextFunction) => {
     const email = request.body.email;
     try {
-      const user: User | null = await UserService.findUserByEmail(email);
+      const user: User | null = UserService.findUserByEmail(email);
 
       if (!user) {
         return response
@@ -31,7 +31,7 @@ router.post(
     try {
       const userId = SessionsService.getUserId(request);
 
-      const user = await UserService.loadUserOrThrow(userId as string);
+      const user = UserService.loadUserOrThrow(userId as string);
       response.send(user);
     } catch (error: any) {
       console.error("Error fetching user:", error);

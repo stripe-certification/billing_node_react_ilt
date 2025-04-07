@@ -20,6 +20,8 @@ class stripe {
   static async findPrice(lookupKey: string): Promise<Stripe.Price> {
     const stripe = this.getSdk();
     let price = null;
+    // Training TODO: Complete the retrieval of a price based on a provided
+    // lookup key. 
     return price;
   }
 
@@ -30,6 +32,9 @@ class stripe {
     currency: string
   ): Promise<Stripe.Price> {
     const stripe = this.getSdk();
+    let price;
+    // Training TODO: Create and return a price with the specified parameters.
+    return price;
   }
 
   static async recordMeterEvent(
@@ -38,8 +43,10 @@ class stripe {
     tokens: string
   ): Promise<Stripe.Billing.MeterEvent> {
     const stripe = this.getSdk();
+    let meterEvent;
+    // Training TODO: Create and return a meter event.
     // #region Start Stripe Implementation
-    return await stripe.billing.meterEvents.create({
+    meterEvent = await stripe.billing.meterEvents.create({
       event_name: eventName,
       payload: {
         stripe_customer_id: customerId,
@@ -47,6 +54,7 @@ class stripe {
       },
     });
     // #region Start Stripe Implementation
+    return meterEvent;
   }
 }
 

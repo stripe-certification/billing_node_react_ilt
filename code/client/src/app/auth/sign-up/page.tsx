@@ -12,10 +12,10 @@ import { LoadingOverlay } from "@/components";
 
 
 function SignUp() {
-  const { isLoggedIn, hasActiveSubscription } = useUserContext();
+  const { isLoggedIn, hasActiveSubscription, userLoading } = useUserContext();
   const router = useRouter();
 
-  const canAccessAccount = isLoggedIn() && hasActiveSubscription();
+  const canAccessAccount = (!userLoading) && isLoggedIn() && hasActiveSubscription();
 
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan")?.toLowerCase() as "monthly" | "yearly";

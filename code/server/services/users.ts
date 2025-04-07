@@ -383,7 +383,8 @@ export const finalizeInvoice = async (invoice: LoraInvoice): Promise<void> => {
       console.log(`Invoice ${invoice.id} is already finalized, skipping.`);
       return;
     }
-
+    if (!invoice.id)
+      throw new Error("Invoice ID is missing or invalid");
     await stripe.getSdk().invoices.finalizeInvoice(invoice.id);
 
     console.log(`Invoice ${invoice.id} finalized successfully.`);

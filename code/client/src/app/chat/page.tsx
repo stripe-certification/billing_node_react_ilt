@@ -17,13 +17,13 @@ const ChatPage = () => {
   );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { isLoggedIn, hasActiveSubscription } = useUserContext();
+  const { isLoggedIn, hasActiveSubscription, userLoading } = useUserContext();
   const router = useRouter();
 
   const modelsArray = offerings?.models ? Object.values(offerings.models) : [];
 
   useEffect(() => {
-    if (!isLoggedIn() || !hasActiveSubscription()) {
+    if ((!userLoading) && (!isLoggedIn() || !hasActiveSubscription())) {
       router.push("/auth/sign-up");
     }
     if (!offeringsLoading && offerings && selectedModel === null) {
@@ -38,43 +38,20 @@ const ChatPage = () => {
   }
 
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length) {
+    if (e.target.value.length <= 500) {
       setPrompt(e.target.value);
       setResponse("");
+      setError(null);
     } else {
       setError("Prompt must be less than 500 characters");
     }
   };
 
+  // Training TODO: Make a call to the server to: 
+  // 1) generate a response to the prompt using the selected model and
+  // 2) record the user's usage of the selected model by creating
+  // a meter event. Display the response in the UI.
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    if (!selectedModel) {
-      throw new Error("Selected model .");
-    }
-
-    try {
-      const { data } = await fetchClient.post(`/chat`, {
-        prompt,
-        meterEventName: selectedModel.meterEventName,
-      });
-
-      if (data.error) {
-        setError(data.error.message);
-      } else {
-        setResponse(data.message);
-        setPrompt("");
-        setError(null);
-      }
-    } catch (error: any) {
-      console.error("Error submitting request:", error);
-      setError(
-        error.response.data.error.message ||
-          "An error occurred while submitting the request."
-      );
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   return (

@@ -21,6 +21,7 @@ interface UserContextType extends State {
   register: (email: string) => Promise<User>;
   isLoggedIn: () => boolean;
   hasActiveSubscription: () => boolean;
+  userLoading: this['isLoading'];
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -92,6 +93,7 @@ export function UserProvider({ children }: PropsWithChildren<unknown>) {
   }
 
   function isLoggedIn() {
+    if (state.isLoading) return true;
     return !!state.user?.email;
   }
 
@@ -108,6 +110,7 @@ export function UserProvider({ children }: PropsWithChildren<unknown>) {
     register,
     isLoggedIn,
     hasActiveSubscription,
+    userLoading: state.isLoading,
   };
 
   return (

@@ -22,7 +22,7 @@ export default function Account() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoggedIn()) {
+    if (!isLoading && !isLoggedIn()) {
       router.push("/auth/sign-up");
     }
   }, [isLoggedIn, router]);

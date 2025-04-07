@@ -10,26 +10,7 @@ router.post(
   "/chat",
   SessionsService.isAuthenticated,
   async (request: Request, response: Response) => {
-    const userId = SessionsService.getUserId(request);
-
-    if (!userId) throw new Error("User not authenticated");
-
-    const user: User = await UserService.loadUserOrThrow(userId);
-
-    const { prompt, meterEventName } = request.body;
-
-    try {
-      const chatResponse = await ChatService.generateLlmResponse(
-        prompt,
-        user,
-        meterEventName
-      );
-
-      response.json(chatResponse);
-    } catch (error: any) {
-      console.error("Error submitting request:", error);
-      response.status(500).json({ error });
-    }
+    // Training TODO: Record the user's usage of the LLM. 
   }
 );
 

@@ -30,6 +30,7 @@ const Subscribe = () => {
     }
 
     const getSecret = async () => {
+      // Training TODO: Get a client secret from the server to use in with Stripe Checkout */
     };
 
     getSecret();
@@ -64,6 +65,7 @@ const Subscribe = () => {
 
         <div className="bg-white p-8 rounded-lg shadow-md">
           <div id="checkout">
+            { /* Training TODO: Implement Stripe Checkout */}
           </div>
         </div>
       </div>
