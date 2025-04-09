@@ -1,7 +1,5 @@
 ## Stripe Billing Workshop Application: Lora AI
 
-# Stripe Billing Usage-Based Subscription Example
-
 This application is built for educational purposes as an example of how to use Stripe Billing to create a usage-based subscription model.
 
 ## Prerequisites
@@ -12,14 +10,14 @@ This application is built for educational purposes as an example of how to use S
 
 ## Setup
 
-0. **(Stripe-only) Ensure you have a valid directory**
+### 0. (Stripe-only) Ensure you have a valid directory
 
 ```bash
 mkdir -p ~/stripe
 cd ~/stripe
 ```
 
-1. **Clone the repository:**
+### 1. Clone the repository:
 
 <details open>
 
@@ -47,7 +45,7 @@ cd billing_node_react_ilt
 
 </details>
    
-2. **Set up system dependencies**
+### 2. Set up system dependencies
 
 You can install the Stripe CLI with brew by running `brew install stripe/stripe-cli/stripe`. If you don't have `brew`, check [here](https://docs.stripe.com/stripe-cli) for other installation commands.
 
@@ -58,58 +56,41 @@ nodenv install 20.17.0
 nodeenv local 20.17.0
 ```
 
-2. **Install Backend dependencies:**
+### 3. Install dependencies:
 
-   Navigate to the backend directory and run:
+The client and server run separately in this project, so we recommend opening two terminals side-by-side.
 
-   ```bash
-   cd ./servers/node/server
-   npm install
-   ```
+In the first terminal, install the server dependencies:
+  
 
-3. **Install Frontend dependencies:**
+```bash
+cd ./code/server
+npm install
+```
 
-   Navigate to the frontend directory and run:
+In the second terminal, install the client dependencies:
 
-   ```bash
-   cd ./client/nextjs/client
-   npm install
-   ```
+```bash
+cd ./code/client
+npm install
+```
 
-4. **Copy environment variables:**
+### 4. Set up your environment variables:
 
-   Copy the `.env.example` files to `.env` and populate with your Stripe keys.
+You'll need to set up the environment variables on both sides of the project.  
 
-   Optional: You can run the following commands from the root directory to generate the `.env` files:
+1. Go to the Dashboard's [API key page](https://dashboard.stripe.com/test/apikeys) so that you'll have the publishable and secret keys on hand.
+2. Run `stripe login` to get your CLI synced with your account. Once that's complete, run `stripe listen --print-secret` to get your webhook secret.
+3. From your terminal in `code/server`, run `cp ./.env.example .env` to set up your `.env` file. Plug in the values for the Stripe secret, publishable, and webhook keys.
+4. From your terminal in `code/client`, run `cp ./.env.example .env` to set up your `.env` file. Plug in the value for the Stripe publishable key.
 
-   ```bash
-   cp ./servers/node/server/.env.example ./servers/node/server/.env
-   cp ./client/nextjs/client/.env.example ./client/nextjs/client/.env
-   ```
 
-5. **Start local webhook listener:**
+### 5. Start the client & server
 
-   Open a terminal and run the following command in `./servers/node/server` to start your local webhook listener. Copy the webhook secret and paste it into `./servers/node/server/.env`.
+1. From your terminal in `code/server`, run `npm run dev`.
+2. From your terminal in `code/client`, run `npm run dev`.
+3. Open `localhost:3000` and the Lora app should open right up!
 
-   ```bash
-   stripe listen --forward-to http://localhost:4242/webhooks
-   ```
-
-6. **Start the server:**
-
-   In a terminal, run the following command within `./servers/node/server` to start the server:
-
-   ```bash
-   npm run dev
-   ```
-
-7. **Start the client:**
-
-   In another terminal, run the following command within `./client/nextjs/client` to start the client:
-
-   ```bash
-   npm run dev
-   ```
 
 ## Create Expected Stripe Objects
 
