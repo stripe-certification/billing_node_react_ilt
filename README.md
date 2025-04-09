@@ -6,19 +6,57 @@ This application is built for educational purposes as an example of how to use S
 
 ## Prerequisites
 
-- Node.js
+- Node.js v20.17.0
 - Stripe CLI
-- Stripe Dashboard
-- Stripe Workbench
+- Access to a Stripe account
 
 ## Setup
 
+0. **(Stripe-only) Ensure you have a valid directory**
+
+```bash
+mkdir -p ~/stripe
+cd ~/stripe
+```
+
 1. **Clone the repository:**
 
-   ```bash
-   git clone <repository-url>
-   cd <repository-name>
-   ```
+<details open>
+
+<summary>My GitHub account has an SSH key</summary>
+
+```bash
+git clone git@github.com:stripe-certification/billing_node_react_ilt.git
+cd billing_node_react_ilt
+```
+
+</details>
+
+<details>
+
+<summary>My GitHub account doesn't have an SSH key</summary>
+
+You can quickly clone the repo by using the GitHub CLI.
+
+```bash
+brew install gh
+gh auth login
+gh repo clone stripe-certification/billing_node_react_ilt
+cd billing_node_react_ilt
+```
+
+</details>
+   
+2. **Set up system dependencies**
+
+You can install the Stripe CLI with brew by running `brew install stripe/stripe-cli/stripe`. If you don't have `brew`, check [here](https://docs.stripe.com/stripe-cli) for other installation commands.
+
+We'll use Node v20.17.0 on this application.  You can set it up with `nodenv` by running:
+
+```bash
+nodenv install 20.17.0
+nodeenv local 20.17.0
+```
 
 2. **Install Backend dependencies:**
 
