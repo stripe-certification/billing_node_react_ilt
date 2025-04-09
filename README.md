@@ -89,7 +89,7 @@ npm install
 
 You'll need to set up the environment variables on both sides of the project.  
 
-0. Make sure you're logged into the account we created for you (`sessions-dev`).
+0. Make sure you're logged into the account we created for you (`sessions-dev`) and are using Test Mode.
 1. Go to the Dashboard's [API key page](https://dashboard.stripe.com/test/apikeys) so that you'll have the publishable and secret keys on hand.
 2. Run `stripe login` to get your CLI synced with your account. Once that's complete, run `stripe listen --print-secret` to get your webhook secret.
 3. From your terminal in `code/server`, run `cp ./.env.example .env` to set up your `.env` file. Plug in the values for the Stripe secret, publishable, and webhook keys.
