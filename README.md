@@ -63,7 +63,7 @@ We'll use Node v20.17.0 on this application.  You can set it up with `nodenv` by
 
 ```bash
 nodenv install 20.17.0
-nodeenv local 20.17.0
+nodenv local 20.17.0
 ```
 
 ### 3. Install dependencies:
