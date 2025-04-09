@@ -1,4 +1,4 @@
-## Stripe Billing Workshop Application: Lora AI
+# Stripe Billing Workshop Application: Lora AI
 
 This application is built for educational purposes as an example of how to use Stripe Billing to create a usage-based subscription model.
 
@@ -7,6 +7,16 @@ This application is built for educational purposes as an example of how to use S
 - Node.js v20.17.0
 - Stripe CLI
 - Access to a Stripe account
+
+## Your tasks for today
+
+You can find every place which needs updates by searching for TODO, but here's a summary:
+
+1. Set up Embedded Checkout in the `Subscribe` component. This will also require setting up the code which creates a Checkout Session in the server's `users` service.
+2. Update `clients/stripe` in the server to fetch our prices.
+3. Set up the flow for creating meter events when somebody submits a prompt. You'll make changes from the prompt form all the way through to the server's `chat` service.
+4. Set up the code which updates a user's account status if their payment fails.
+5. Redirect users to the Customer Portal in order to complete actions like updating their payment method or canceling their subscription.
 
 ## Setup
 
@@ -102,7 +112,7 @@ Using the Stripe Dashboard or Workbench, create the following objects:
 - **6 model prices** (2 for each meter; 1 monthly, 1 yearly)
 - **2 recurring (prepaid) prices** (1 monthly, 1 yearly) for a total of 8 prices
 
-### Step 1: Create Meter Objects
+### 1: Create Meters
 
 Create three `Meter` objects with different `event_name` values (`titan`, `claude`, and `chatgpt`).
 
@@ -125,7 +135,7 @@ const meter = await stripe.billing.meters.create({
 });
 ```
 
-Step 2: Create Products and Prices
+### 2: Create Products and Prices
 
 Create 4 products to represent the Models & Prepaid Tokens. **Tip: Include product_data in your price creation calls.**
 
