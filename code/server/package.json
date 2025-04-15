@@ -31,6 +31,7 @@
         "lorem-ipsum": "^2.0.8",
         "lowdb": "^7.0.1",
         "node-cache": "^5.1.2",
+        "openai": "^4.94.0",
         "stripe": "^18.0.0"
     },
     "devDependencies": {

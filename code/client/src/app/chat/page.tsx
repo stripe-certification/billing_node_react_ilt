@@ -7,9 +7,13 @@ import React, { useEffect, useState } from "react";
 import { LoadingOverlay } from "@/components";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "@/contexts/UserContext";
+import { AxiosError } from "axios";
 
 const ChatPage = () => {
+  const router = useRouter();
   const { offerings, offeringsLoading } = useOfferings();
+  const { isLoggedIn, hasActiveSubscription, userLoading } = useUserContext();
+
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState("");
   const [selectedModel, setSelectedModel] = useState<PricedLlmModel | null>(
@@ -17,8 +21,6 @@ const ChatPage = () => {
   );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { isLoggedIn, hasActiveSubscription, userLoading } = useUserContext();
-  const router = useRouter();
 
   const modelsArray = offerings?.models ? Object.values(offerings.models) : [];
 
@@ -33,7 +35,7 @@ const ChatPage = () => {
     setIsLoading(false);
   }, [offerings, offeringsLoading, isLoggedIn, router, hasActiveSubscription]);
 
-  if (isLoading || !isLoggedIn() || offeringsLoading) {
+  if (userLoading || !isLoggedIn() || offeringsLoading) {
     return <LoadingOverlay />;
   }
 

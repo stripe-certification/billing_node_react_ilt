@@ -1,31 +1,34 @@
 import Stripe from "stripe";
 import stripe from "../clients/stripe";
 import { User } from "../types/users";
-import { dummyLlm } from "../clients/openai";
+import OpenAI from "../clients/openai";
 import { UserService } from "./users";
-
-function estimateTokenCount(text: string): string {
-  const words = text.trim().split(/\s+/).length; // count words
-  return Math.ceil(words * 1.3).toString(); // approximate word-to-token conversion
-}
 
 async function generateLlmResponse(
   prompt: string,
   user: User,
-  eventName: string
+  modelName: string
 ): Promise<{
   message: string;
   meterEvent: Stripe.Billing.MeterEvent;
 }> {
   let meterEvent: Stripe.Billing.MeterEvent;
+  let message: string = "plug in response from a model";
+  const model = chooseModel(modelName);
+
   // Training TODO: Calculate the response from the LLM and 
-  // create a meter event to record the usage.
-  const message = dummyLlm(prompt);
+  // create a meter event to record the usage. Also ensure
+  // the user's account is active before spending any tokens.
 
   return {
     meterEvent,
     message,
   };
+}
+
+function chooseModel(modelName: string) {
+  // TODO: Implement other models
+  return OpenAI.generateResponse
 }
 
 export const ChatService = {

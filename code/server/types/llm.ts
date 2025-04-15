@@ -1,5 +1,10 @@
 import Stripe from "stripe";
 
+export interface LlmResponse {
+  message: string;
+  numTokens: number;
+}
+
 interface LlmModel {
   modelName: string;
   meterEventName: string;
