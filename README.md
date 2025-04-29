@@ -1,11 +1,11 @@
 # Stripe Billing Workshop Application: Lora AI
 
-This application is built for educational purposes as an example of how to use Stripe Billing to create a usage-based subscription model.
+Lora is a sample AI chatbot application built to demonstrate how Stripe Billing can enable usage-based credit burndown models.
 
 ## Prerequisites
 
-- Node.js v20.17.0
-- Stripe CLI
+- Node.js v22.15.0
+- [Install](https://docs.stripe.com/stripe-cli) the Stripe CLI
 - Access to a Stripe account
 
 ## Your tasks for today
@@ -20,14 +20,16 @@ You can find every place which needs updates by searching for TODO, but here's a
 
 ## Setup
 
-### 0. (Stripe-only) Ensure you have a valid directory
+### 0. (Stripes-only) Ensure you have a valid directory
 
 ```bash
 mkdir -p ~/stripe
 cd ~/stripe
 ```
 
-### 1. Clone the repository:
+### 1. Clone the repository
+
+If you're unfamiliar with cloning repositories, we have instructions below for whether or not you have an SSH key.
 
 <details open>
 
@@ -59,14 +61,14 @@ cd billing_node_react_ilt
 
 You can install the Stripe CLI with brew by running `brew install stripe/stripe-cli/stripe`. If you don't have `brew`, check [here](https://docs.stripe.com/stripe-cli) for other installation commands.
 
-We'll use Node v20.17.0 on this application.  You can set it up with `nodenv` by running:
+We'll use Node v22.15.0 on this application.  You can set it up with `nodenv` by running:
 
 ```bash
-nodenv install 20.17.0
-nodeenv local 20.17.0
+nodenv install 22.15.0
+nodeenv local 22.15.0
 ```
 
-### 3. Install dependencies:
+### 3. Install dependencies
 
 The client and server run separately in this project, so we recommend opening two terminals side-by-side.
 
@@ -85,7 +87,7 @@ cd ./code/client
 npm install
 ```
 
-### 4. Set up your environment variables:
+### 4. Set up your environment variables
 
 You'll need to set up the environment variables on both sides of the project.  
 
@@ -95,100 +97,20 @@ You'll need to set up the environment variables on both sides of the project.
 3. From your terminal in `code/server`, run `cp ./.env.example .env` to set up your `.env` file. Plug in the values for the Stripe secret, publishable, and webhook keys.
 4. From your terminal in `code/client`, run `cp ./.env.example .env` to set up your `.env` file. Plug in the value for the Stripe publishable key.
 
+### 5. Set up prerequisite objects
 
-### 5. Start the client & server
+The Lora billing model depends on 4 products, 3 of which are metered.  All of them have both monthly and recurring prices.  You should have created these resources on your account earlier today, but if you haven't yet, then you'll find the instructions and commands for doing so in the [Companion App's M4-1](https://stripe-certification.github.io/companion-app/#/s25-billing/m4-1).
+
+
+### 6. Start the client & server
 
 1. From your terminal in `code/server`, run `npm run dev`.
 2. From your terminal in `code/client`, run `npm run dev`.
 3. Open `localhost:3000` and the Lora app should open right up!
 
 
-## Create Expected Stripe Objects
-
-Using the Stripe Dashboard or Workbench, create the following objects:
-
-- **3 meters**
-- **4 products** (1 for each meter, 1 for prepaid tokens)
-- **6 model prices** (2 for each meter; 1 monthly, 1 yearly)
-- **2 recurring (prepaid) prices** (1 monthly, 1 yearly) for a total of 8 prices
-
-### 1: Create Meters
-
-Create three `Meter` objects with different `event_name` values (`titan`, `claude`, and `chatgpt`).
-
-**Note** some required fields are not included via Stripe Workbench API Explorer
-be sure to include `-d "customer_mapping[type]=by_id"` manually in your request.
-
-Example:
-
-```javascript
-const meter = await stripe.billing.meters.create({
-  display_name: "<event_name> AI tokens",
-  event_name: "titan",
-  default_aggregation: {
-    formula: "sum",
-  },
-  customer_mapping: {
-    event_payload_key: "stripe_customer_id",
-    type: "by_id",
-  },
-});
-```
-
-### 2: Create Products and Prices
-
-Create 4 products to represent the Models & Prepaid Tokens. **Tip: Include product_data in your price creation calls.**
-
-Example:
-
-```javascript
-const price = await stripe.prices.create({
-  currency: "usd",
-  unit_amount: 5,
-  billing_scheme: "per_unit",
-  transform_quantity: {
-    divide_by: 1000,
-    round: "up",
-  },
-  recurring: {
-    usage_type: "metered",
-    interval: "month",
-    meter: "{{METER_ID}}",
-  },
-  product_data: {
-    name: "AWS Titan",
-  },
-  lookup_key: "titan_monthly",
-  transfer_lookup_key: true,
-});
-```
-
-• Product 1: Fixed rate yearly and monthly pricing (lookup keys: yearly, monthly)
-• Product 2: Usage-based yearly and monthly pricing for titan (lookup keys: titan_yearly, titan_monthly)
-• Product 3: Usage-based yearly and monthly pricing for claude (lookup keys: claude_yearly, claude_monthly)
-• Product 4: Usage-based yearly and monthly pricing for chatgpt (lookup keys: chatgpt_yearly, chatgpt_monthly)
-
-The 6 model prices should be linked to the corresponding meter.id.
-
 # Configure the Billing Customer Portal
 
-Visit [The Customer Portal] (https://dashboard.stripe.com/test/settings/billing/portal) in your Stripe Dashboard to configure the billing portal
+Visit the [Customer Portal Settings page] (https://dashboard.stripe.com/test/settings/billing/portal) in your Stripe Dashboard to configure the billing portal.
 
 Test Your Setup 1. Navigate to localhost:3000. You should see a landing page with a “Sign Up” section at the bottom. 2. If the client and server are communicating properly and you’ve created your prices, you should see a price listed for each plan. 3. Clicking “Get Started” should take you to a create account page. After completing the form, you should be redirected to http://localhost:3000/sign-up?plan=<selected-plan>.
-
-# Routes
-
-Top-Level Routers
-• /users and /chats
-
-User Routes
-• /users/register — Set up a new account
-• /users/login — Start a session with express-session
-• /users/manage — Redirect to the customer portal
-• /users/logout — End the session
-
-Chat Routes
-• /chats — Accept text parameters and use the userId from the session to produce a response
-
-Webhook Routes
-• /webhooks — Consume events from Stripe
