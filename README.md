@@ -1,12 +1,20 @@
 # Stripe Billing Workshop Application: Lora AI
 
-Lora is a sample AI chatbot application built to demonstrate how Stripe Billing can enable usage-based credit burndown models.
+<!-- toc -->
 
-## Prerequisites
+## Lora Overview
 
-- Node.js v22.15.0
-- [Install](https://docs.stripe.com/stripe-cli) the Stripe CLI
-- Access to a Stripe account
+Lora is a sample AI chatbot application which lets users choose from a number of models and charges them on a per-token basis. It demonstrates a few features:
+
+- Representing a usage-based billing model using meters, products, and prices
+- Starting a subscription using an [embedded Checkout Session](https://embedcheckout.com)
+- [Registering usage](https://docs.stripe.com/billing/subscriptions/usage-based/recording-usage) from a given user via meter events
+- Integrating the [Customer Portal](https://billing.stripe.com/customer-portal-demo) for lightweight subscription management
+- Consuming webhook events to freeze service on cancelled accounts
+
+For the sake of demonstration, the per-token prices you'll use today will be more than 100x higher than usual. This is to ensure that you'll be able to get some real numbers without having to run too many test prompts.
+
+_Author's note: This app's author, John O'Sullivan, integrated a lightweight AI solution that is not endorsed by Stripe. OpenRouter.ai made it easy to share API keys for a free usage tier. We have no official affiliation with them._
 
 ## Your tasks for today
 
@@ -18,7 +26,10 @@ You can find every place which needs updates by searching for TODO, but here's a
 4. Set up the code which updates a user's account status if their payment fails.
 5. Redirect users to the Customer Portal in order to complete actions like updating their payment method or canceling their subscription.
 
+
 ## Setup
+
+The commands below were written for a `bash` terminal on a Unix system. If you're on Windows, we recommend working with Ubuntu on WSL, but the commands should also run in PowerShell.
 
 ### 0. (Stripes-only) Ensure you have a valid directory
 
@@ -46,10 +57,13 @@ cd billing_node_react_ilt
 
 <summary>My GitHub account doesn't have an SSH key</summary>
 
-You can quickly clone the repo by using the GitHub CLI.
+You can quickly clone the repo by using the GitHub CLI.  You can install it via:
+
+- Unix systems with `brew`: `brew install gh`
+- Windows systems: `winget install --id GitHub.cli`
+- Other: https://github.com/cli/cli#installation
 
 ```bash
-brew install gh
 gh auth login
 gh repo clone stripe-certification/billing_node_react_ilt
 cd billing_node_react_ilt
@@ -59,14 +73,20 @@ cd billing_node_react_ilt
    
 ### 2. Set up system dependencies
 
-You can install the Stripe CLI with brew by running `brew install stripe/stripe-cli/stripe`. If you don't have `brew`, check [here](https://docs.stripe.com/stripe-cli) for other installation commands.
+You can install the Stripe CLI with brew by running: 
 
-We'll use Node v22.15.0 on this application.  You can set it up with `nodenv` by running:
+`brew install stripe/stripe-cli/stripe`. 
+
+If you're on a Windows machine or don't have `brew`, check [here](https://docs.stripe.com/stripe-cli) for other installation commands.
+
+We'll use Node v22.15.0 on this application.  You can set it up with [`nodenv`](https://github.com/nodenv/nodenv) by running:
 
 ```bash
 nodenv install 22.15.0
-nodeenv local 22.15.0
+nodenv local 22.15.0
 ```
+
+If you don't already have `nodenv` installed, then you can do so with their [easy installation](https://github.com/nodenv/nodenv-installer#nodenv-installer) package: `npx @nodenv/nodenv-installer`.
 
 ### 3. Install dependencies
 
@@ -114,3 +134,16 @@ The Lora billing model depends on 4 products, 3 of which are metered.  All of th
 Visit the [Customer Portal Settings page] (https://dashboard.stripe.com/test/settings/billing/portal) in your Stripe Dashboard to configure the billing portal.
 
 Test Your Setup 1. Navigate to localhost:3000. You should see a landing page with a “Sign Up” section at the bottom. 2. If the client and server are communicating properly and you’ve created your prices, you should see a price listed for each plan. 3. Clicking “Get Started” should take you to a create account page. After completing the form, you should be redirected to http://localhost:3000/sign-up?plan=<selected-plan>.
+
+## Running the Playwright smoke test
+
+There's a minimal smoke test written in Playwright to ensure that the application still starts once the Stripe integration has been redacted.  Run it with the following commands:
+
+```
+npm install
+export PLAYWRIGHT_BROWSERS_PATH=0
+npx playwright install --with-deps chromium
+npx playwright test
+```
+
+Note: Playwright installs browsers into a shared system directory by default. The environment variable exported above tells it to install browsers directly into this project folder, which is helpful on corporate devices which only allow binaries to be run from particular directories.  If you don't have that constraint, then the variable can be omitted.
