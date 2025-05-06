@@ -2,6 +2,21 @@
 
 <!-- toc -->
 
+  * [Lora Overview](#lora-overview)
+  * [Your tasks for today](#your-tasks-for-today)
+  * [Setup](#setup)
+    + [0. (Stripes-only) Ensure you have a valid directory](#0-stripes-only-ensure-you-have-a-valid-directory)
+    + [1. Clone the repository](#1-clone-the-repository)
+    + [2. Set up system dependencies](#2-set-up-system-dependencies)
+    + [3. Install dependencies](#3-install-dependencies)
+    + [4. Set up your environment variables](#4-set-up-your-environment-variables)
+    + [5. Set up prerequisite objects](#5-set-up-prerequisite-objects)
+    + [6. Start the client & server](#6-start-the-client--server)
+- [Configure the Billing Customer Portal](#configure-the-billing-customer-portal)
+  * [Running the Playwright smoke test](#running-the-playwright-smoke-test)
+
+<!-- tocstop -->
+
 ## Lora Overview
 
 Lora is a sample AI chatbot application which lets users choose from a number of models and charges them on a per-token basis. It demonstrates a few features:
@@ -14,7 +29,7 @@ Lora is a sample AI chatbot application which lets users choose from a number of
 
 For the sake of demonstration, the per-token prices you'll use today will be more than 100x higher than usual. This is to ensure that you'll be able to get some real numbers without having to run too many test prompts.
 
-_Author's note: This app's author, John O'Sullivan, integrated a lightweight AI solution that is not endorsed by Stripe. OpenRouter.ai made it easy to share API keys for a free usage tier. We have no official affiliation with them._
+_Author's note: There is a minimal OpenAI integration included in this application. If you have an OpenAI account, you can plug in your own API keys to get real LLM responses rather than lorem ipsum._
 
 ## Your tasks for today
 
