@@ -29,7 +29,9 @@ Lora is a sample AI chatbot application which lets users choose from a number of
 
 For the sake of demonstration, the per-token prices you'll use today will be more than 100x higher than usual. This is to ensure that you'll be able to get some real numbers without having to run too many test prompts.
 
-_Author's note: There is a minimal OpenAI integration included in this application. If you have an OpenAI account, you can plug in your own API keys to get real LLM responses rather than lorem ipsum._
+_Author's Note 1: This application is built toward the `2025-02-24.acacia` API version, but the more recent `2025-03-31.basil` has introduced breaking changes which impact this integration. In particular, the attributes of a Checkout Session have changed. The accounts we've created for you are configured to use `2025-02-24.acacia`, and if you're logged into the account, the API reference will show you that version. However, if you plug in API keys from an account on the latest version, this integration won't work._
+
+_Author's Note 2: There is a minimal OpenAI integration included in this application. If you have an OpenAI account, you can plug in your own API keys to get real LLM responses rather than lorem ipsum. You can also explore OpenRouter.ai, which uses the OpenAI integration shape but lets you plug in other models, some of which are free._
 
 ## Your tasks for today
 
